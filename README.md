@@ -24,4 +24,4 @@ The package structure is as follows
     └───matplotlib
         │   __init__.py
         │   images.py
-    ```
+```
