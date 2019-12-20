@@ -17,19 +17,19 @@ def add_command_line_args(command_line_args, description='Generic command line a
     else:
         argparse = sys.modules['argparse']
 
-    ap = argparse.ArgumentParser(description=description)
+    parser = argparse.ArgumentParser(description=description)
 
     # Add all the necessary command_line arguments
     for i, argument in enumerate(command_line_args):
         arg_size = len(argument)
         # argument => (-shortcut, --command_name, kwargs)
         if arg_size == 3:
-            ap.add_argument(argument[0], argument[1], **argument[2])
+            parser.add_argument(argument[0], argument[1], **argument[2])
         elif arg_size == 2:
-            ap.add_argument(argument[0], **argument[1])
+            parser.add_argument(argument[0], **argument[1])
         else:
             raise ValueError("Invalid argument passed at index: ", i, ". Object: ", argument)
-    return ap
+    return parser
 
 
 def _generate_experiment_commands(experiment_count):
@@ -42,6 +42,7 @@ if __name__ == "__main__":
     # argparse = add_command_line_args([
     #     '-a, --test, required=True, default=10'
     # ])
+
     argparse = add_command_line_args([
         ['-lr', '--learning_rate', {
             'default': 0.001

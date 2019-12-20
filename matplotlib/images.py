@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import runpy
 
 
 def data_as_image(data, figure=None, axes=None, figsize=(5, 3)):
@@ -28,11 +29,4 @@ def data_as_image(data, figure=None, axes=None, figsize=(5, 3)):
 
 if __name__ == "__main__":
     data_as_image(1)
-
-# function automate() {
-#     $("#stopDataCollection").trigger('click');
-#     $("#nextExperiment").trigger('click');
-#     $("#addItem").trigger('click');
-# }
-#
-# setInterval(automate, 15000);
+    runpy.run_path("../util/data.py")
