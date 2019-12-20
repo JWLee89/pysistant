@@ -18,8 +18,8 @@ The package structure is as follows
     │   │   csv.py
     │
     └───logging
-    │   __init__.py
-    │   write.py
+    │   |    __init__.py
+    │   |    write.py
     │      
     └───matplotlib
         │   __init__.py
