@@ -1,13 +1,13 @@
 import csv
 
 
-def write(relative_file_path, data, newline='\n'):
+def write(relative_file_path, data):
     """
         Simple function for writing to csv file
         :param relative_file_path The relative file path
         :param data The data to write. Must be an iterable dataset
     """
-    with open(relative_file_path, 'w', newline=newline) as csv_file:
+    with open(relative_file_path, 'w') as csv_file:
         wr = csv.writer(csv_file)
         for row in data:
             wr.writerow(row)
@@ -18,11 +18,18 @@ def read(file_path, has_header=True):
 
     def handle_file_write(keys=None):
         """
-            TODO: add comments and refactor
+            :param keys:
+            :return:
         """
         cur_item = {}
 
         def write_with_headers(line):
+            """
+                In this case, each item inside of the header list
+                will be the 'key' for each row
+
+                :param line The current line that is being read
+            """
             data = line.split(',')
             i = 0
             for key in keys:
@@ -31,6 +38,12 @@ def read(file_path, has_header=True):
             result.append(cur_item)
 
         def write_without_headers(line):
+            """
+                Since there is no header, our key will simply be
+                the zero-based indexes of the elements
+                e.g. 0, 1, 2, 3, ... , n
+                :param line The current line that is being read
+            """
             data = line.split(',')
             for i in range(len(data)):
                 cur_item[i] = data[i].strip()
