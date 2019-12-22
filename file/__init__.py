@@ -12,14 +12,14 @@ def read(file_name, write_row=None):
         Simple function for reading a CSV and and adding to a list
         Can be modified to be a generator that yields each row
         :param file_name: The name of the file
-        :return:
+        :return: A generator containing each line in the given data file
     """
     result = []
     with open(file_name, "r") as file:
         if not callable(write_row):
             write_row = lambda line: line.strip()
         for line in file:
-          result.append(write_row(line))
+            yield write_row(line)
     return result
 
 
