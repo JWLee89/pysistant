@@ -53,10 +53,11 @@ def combine_file_instances(file_name, import_file_names):
     """
     data = []
     # TODO: Add error handling later on. Let's just get this to work first
-    for file_name in import_file_names:
-        data.append(read(file_name))
+    for current_file in import_file_names:
+        data.append(read(current_file))
 
     result = []
+    # Maybe we can optimize this in the future as well.
     for csv_data in data:
         for row in csv_data:
             result.append(row)
@@ -64,4 +65,5 @@ def combine_file_instances(file_name, import_file_names):
 
     # Remove trailing new line character
     del result[-1]
+    # Lastly, write to file
     write(file_name, result)
