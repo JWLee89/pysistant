@@ -5,6 +5,7 @@
     I come across during the course of projects and classes.
     Primarily also for a way for me to get used to Python.
 """
+import os
 
 
 def read(file_name, write_row=None):
@@ -71,32 +72,88 @@ def combine_files(file_name, import_file_names):
     write(file_name, result)
 
 
-def get_subfolders(root, nested=False):
+def _handle_file_traversal(current_path, current_file_name, caller, is_recursive, traversal_handler):
     """
-        :param root: The folder from which we will begin traversing.
+        Private function for handling the logic for getting subfiles (non-folders) recursively
+        :param current_path: The current path
+        :param current_file_name: Name of the file
+        :param caller: The caller of this function
+        :param is_recursive: Boolean flag specifying whether this call is a recursive call
+        :param traversal_handler: The function that handles the actual traversal
+        :return::return:
+    """
+    if os.path.isdir(current_path):
+        yield from caller(current_path, is_recursive=is_recursive, traversal_handler=traversal_handler)
+    else:
+        yield current_file_name
+
+
+def get_files(root_path, is_recursive=False, traversal_handler=None):
+    """
+        Generic function for retrieving files from a given path
+        :param root_path: The path of the folder from which we will begin traversing.
+        Remember that if this is not a folder, an error will be thrown.
+        :param is_recursive: If true, will retrieve contents by recursively
+        iterating through sub-folders. Otherwise, only retrieves direct children of current folder
+        :raises OsError
+        :return: Generator: iterating over all the children files (string)
+    """
+    if not callable(traversal_handler):
+        traversal_handler = _handle_file_traversal
+
+    for file in os.listdir(root_path):
+        current_path = os.path.join(root_path, file)
+        yield from traversal_handler(current_path, file, get_files, is_recursive, traversal_handler)
+
+
+def _handle_subfolder_get(current_path, current_file_name, caller, is_recursive, traversal_handler):
+    """
+    Private function for handling the logic for getting subfolders recursively
+    :param current_path: The current path
+    :param current_file_name: Name of the file
+    :param caller: The caller of this function
+    :param is_recursive: Boolean flag specifying whether this call is a recursive call
+    :param traversal_handler: The function that handles the actual traversal
+    :return:
+    """
+    if os.path.isdir(current_path):
+        yield current_file_name
+        yield from caller(current_path, is_recursive=is_recursive, traversal_handler=traversal_handler)
+
+
+def get_subfolders(root_path, is_recursive=False):
+    """
+        :param root_path: The path of the folder from which we will begin traversing.
         Remember that if this is not a folder, an error will be thrown
-        :param nested: If true, will recursively grab all sub-folders. Otherwise,
+        :param is_recursive: If true, will recursively grab all sub-folders. Otherwise,
         only retrieves direct children of current folder
         :raises OsError
         :return: List: containing all the sub-folder names (string)
     """
-    import os
-    # Check if it is directory
-    if not os.path.isdir(root):
-        raise ValueError("The path: ", root, " is not a valid folder")
+    return get_files(root_path, is_recursive=is_recursive, traversal_handler=_handle_subfolder_get)
 
-    # Change directory
-    # Not sure if this is the best approach
-    os.chdir(root)
-    if nested:
-        return os.walk(root)
 
-    # Return direct sub-directory
-    return next(os.walk('.'))[1]
-
+def get_subfiles(root_path, is_recursive=False):
+    """
+        Returns all files (non-directory) in the given root_path.
+        :param root_path: The path of the folder from which we will begin traversing.
+        Remember that if this is not a folder, an error will be thrown.
+        :param is_recursive: If true, will recursively grab all files (excluding folders). Otherwise,
+        only retrieves direct children of current folder.
+        :raises OsError
+        :return: Generator: iterating over all the children files (string)
+    """
+    return get_files(root_path, is_recursive=is_recursive)
 
 # test functionality
 if __name__ == "__main__":
-    folders = get_subfolders("folder name")
+    from pathlib import Path
+    home = str(Path.home())
+    folders = get_subfolders(home + "/Videos", is_recursive=True)
     for folder in folders:
         print(folder)
+
+    print("-" * 60)
+
+    for file_name in get_subfiles(home + "/Videos", is_recursive=True):
+        print(file_name)
