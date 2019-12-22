@@ -25,10 +25,10 @@ def read(file_name, write_row=None):
 
 def write(file_path, data, write_row=None):
     """
-    Write to file: Can accept a raw string or an iterable object.
-    :param file_path: The path of the file to write data to
-    :param data: The data to write
-    :return: Nothing. Just simply writes to the file.
+        Write to file: Can accept a raw string or an iterable object.
+        :param file_path: The path of the file to write data to
+        :param data: The data to write
+        :return: Nothing. Just simply writes to the file.
     """
     with open(file_path, 'w') as file:
         try:
@@ -73,12 +73,12 @@ def combine_files(file_name, import_file_names):
 
 def get_subfolders(root, nested=False):
     """
-    :param root: The folder from which we will begin traversing.
-    Remember that if this is not a folder, an error will be thrown
-    :param nested: If true, will recursively grab all sub-folders. Otherwise,
-    only retrieves direct children of current folder
-    :raises OsError
-    :return:
+        :param root: The folder from which we will begin traversing.
+        Remember that if this is not a folder, an error will be thrown
+        :param nested: If true, will recursively grab all sub-folders. Otherwise,
+        only retrieves direct children of current folder
+        :raises OsError
+        :return: List: containing all the sub-folder names (string)
     """
     import os
     # Check if it is directory
