@@ -28,13 +28,12 @@ def write(file_path, data, write_row=None):
     Write to file: Can accept a raw string or an iterable object.
     :param file_path: The path of the file to write data to
     :param data: The data to write
-    :return:
+    :return: Nothing. Just simply writes to the file.
     """
     with open(file_path, 'w') as file:
         try:
-            file_iter = iter(file)
+            iter(file)
         except TypeError:
-            # Cannot iterate
             file.write(data)
         else:
             # assign custom method to do_write if it exists.
