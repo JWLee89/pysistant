@@ -44,11 +44,12 @@ def write(file_path, data, handle_write=None):
                     file.write(row)
 
 
-def combine_file_instances(file_name, import_file_names):
+def combine_files(file_name, import_file_names):
     """
-        Quick and dirty approach for writing to a file
+        Quick and dirty approach for combining the data in the user-defined
+        import files and outputting the combined data onto a single file.
         :param file_name: The name of the file that we are aiming to write
-        :param import_file_names: The name of the files that we will be importing
+        :param import_file_names: The name of the files that we will be combining
         :return:
     """
     data = []
