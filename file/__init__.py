@@ -6,7 +6,8 @@
     Primarily also for a way for me to get used to Python.
 """
 
-def read(file_name):
+
+def read(file_name, write_row=None):
     """
         Simple function for reading a CSV and and adding to a list
         Can be modified to be a generator that yields each row
@@ -15,16 +16,18 @@ def read(file_name):
     """
     result = []
     with open(file_name, "r") as file:
+        if not callable(write_row):
+            write_row = lambda line: line.strip()
         for line in file:
-            result.append(line)
+          result.append(write_row(line))
     return result
 
 
-def write(file_path, data, handle_write=None):
+def write(file_path, data, write_row=None):
     """
     Write to file: Can accept a raw string or an iterable object.
-    :param file_path:
-    :param data:
+    :param file_path: The path of the file to write data to
+    :param data: The data to write
     :return:
     """
     with open(file_path, 'w') as file:
@@ -34,14 +37,13 @@ def write(file_path, data, handle_write=None):
             # Cannot iterate
             file.write(data)
         else:
-            # Iterable item. Check if handle_write is defined
-            # TODO: Refactor this so that duplicate data is not included
-            if callable(handle_write):
-                for row in data:
-                    handle_write(row)
-            else:
-                for row in data:
-                    file.write(row)
+            # assign custom method to do_write if it exists.
+            # Otherwise, fallback to built-in write method
+            do_write = file.write
+            if callable(write_row):
+                do_write = write_row
+            for row in data:
+                do_write(row)
 
 
 def combine_files(file_name, import_file_names):
