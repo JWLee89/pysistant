@@ -69,3 +69,34 @@ def combine_files(file_name, import_file_names):
     del result[-1]
     # Lastly, write to file
     write(file_name, result)
+
+
+def get_subfolders(root, nested=False):
+    """
+    :param root: The folder from which we will begin traversing.
+    Remember that if this is not a folder, an error will be thrown
+    :param nested: If true, will recursively grab all sub-folders. Otherwise,
+    only retrieves direct children of current folder
+    :raises OsError
+    :return:
+    """
+    import os
+    # Check if it is directory
+    if not os.path.isdir(root):
+        raise ValueError("The path: ", root, " is not a valid folder")
+
+    # Change directory
+    # Not sure if this is the best approach
+    os.chdir(root)
+    if nested:
+        return os.walk(root)
+
+    # Return direct sub-directory
+    return next(os.walk('.'))[1]
+
+
+# test functionality
+if __name__ == "__main__":
+    folders = get_subfolders("folder name")
+    for folder in folders:
+        print(folder)
