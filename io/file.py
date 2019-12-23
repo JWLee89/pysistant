@@ -1,3 +1,9 @@
+"""
+    @Authory Jay Lee
+    Utility for working with files, hopefully making things easier
+    and also reducing duplicate code when working with files.
+"""
+import os
 
 
 def read(file_name, write_row=None):
