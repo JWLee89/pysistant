@@ -4,6 +4,9 @@
     as needs occur. Code will be added depending on what kind of needs
     I come across during the course of projects and classes.
     Primarily also for a way for me to get used to Python.
+
+    TODO: Change architecture so that there are only import statements
+    under __init__.py
 """
 import os
 
@@ -72,7 +75,8 @@ def combine_files(file_name, import_file_names):
     write(file_name, result)
 
 
-def _handle_file_traversal(current_path, current_file_name, caller, is_recursive, traversal_handler):
+def _handle_file_traversal(current_path, current_file_name, caller,
+                           is_recursive, traversal_handler, level):
     """
         Private function for handling the logic for getting subfiles (non-folders) recursively
         :param current_path: The current path
@@ -80,15 +84,18 @@ def _handle_file_traversal(current_path, current_file_name, caller, is_recursive
         :param caller: The caller of this function
         :param is_recursive: Boolean flag specifying whether this call is a recursive call
         :param traversal_handler: The function that handles the actual traversal
+        :param level: The current level from the root path. Starts from 1, which represents files in
+        root directory
         :return::return:
     """
     if os.path.isdir(current_path):
-        yield from caller(current_path, is_recursive=is_recursive, traversal_handler=traversal_handler)
+        level += 1
+        yield from caller(current_path, is_recursive=is_recursive, traversal_handler=traversal_handler, level=level)
     else:
-        yield current_file_name
+        yield level, current_file_name
 
 
-def get_files(root_path, is_recursive=False, traversal_handler=None):
+def get_files(root_path, is_recursive=False, traversal_handler=None, level=1):
     """
         Generic function for retrieving files from a given path
         :param root_path: The path of the folder from which we will begin traversing.
@@ -103,22 +110,26 @@ def get_files(root_path, is_recursive=False, traversal_handler=None):
 
     for file in os.listdir(root_path):
         current_path = os.path.join(root_path, file)
-        yield from traversal_handler(current_path, file, get_files, is_recursive, traversal_handler)
+        yield from traversal_handler(current_path, file, get_files, is_recursive, traversal_handler, level)
 
 
-def _handle_subfolder_get(current_path, current_file_name, caller, is_recursive, traversal_handler):
+def _handle_subfolder_get(current_path, current_file_name, caller,
+                          is_recursive, traversal_handler, level):
     """
-    Private function for handling the logic for getting subfolders recursively
-    :param current_path: The current path
-    :param current_file_name: Name of the file
-    :param caller: The caller of this function
-    :param is_recursive: Boolean flag specifying whether this call is a recursive call
-    :param traversal_handler: The function that handles the actual traversal
-    :return:
+        Private function for handling the logic for getting subfolders recursively
+        :param current_path: The current path
+        :param current_file_name: Name of the file
+        :param caller: The caller of this function
+        :param is_recursive: Boolean flag specifying whether this call is a recursive call
+        :param traversal_handler: The function that handles the actual traversal
+        :param level: The current level from the root path. Starts from 1, which represents files in
+        root directory
+        :return:
     """
     if os.path.isdir(current_path):
-        yield current_file_name
-        yield from caller(current_path, is_recursive=is_recursive, traversal_handler=traversal_handler)
+        yield level, current_file_name
+        level += 1
+        yield from caller(current_path, is_recursive=is_recursive, traversal_handler=traversal_handler, level=level)
 
 
 def get_subfolders(root_path, is_recursive=False):
@@ -130,7 +141,7 @@ def get_subfolders(root_path, is_recursive=False):
         :raises OsError
         :return: List: containing all the sub-folder names (string)
     """
-    return get_files(root_path, is_recursive=is_recursive, traversal_handler=_handle_subfolder_get)
+    return get_files(root_path, is_recursive=is_recursive, traversal_handler=_handle_subfolder_get, level=1)
 
 
 def get_subfiles(root_path, is_recursive=False):
@@ -143,7 +154,8 @@ def get_subfiles(root_path, is_recursive=False):
         :raises OsError
         :return: Generator: iterating over all the children files (string)
     """
-    return get_files(root_path, is_recursive=is_recursive)
+    return get_files(root_path, is_recursive=is_recursive, level=1)
+
 
 # test functionality
 if __name__ == "__main__":
@@ -155,5 +167,6 @@ if __name__ == "__main__":
 
     print("-" * 60)
 
-    for file_name in get_subfiles(home + "/Videos", is_recursive=True):
+    # Sorted according to hierarchy
+    for file_name in sorted(get_subfiles(home + "/Videos", is_recursive=True)):
         print(file_name)
