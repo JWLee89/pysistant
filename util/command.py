@@ -6,9 +6,9 @@
 import runpy
 import os
 import sys
+import argparse
 from pathlib import Path
 from pysistant.util.validation import isiterable, ispython
-argparse_module_name = 'argparse'
 
 
 def run_python_script(script_path, arguments, do_async=False):
@@ -39,9 +39,9 @@ def run_python_script(script_path, arguments, do_async=False):
     # File must be iterable
     if isiterable(arguments):
         for argument in arguments:
-            add_command_line_args(argument)
+            get_argparser(argument)
     elif isinstance(arguments, str):
-        add_command_line_args(arguments)
+        get_argparser(arguments)
     else:
         raise TypeError("Arguments must either be a string or a iterable object of strings E.g. list or tuple")
 
@@ -53,39 +53,38 @@ def create_sh():
     """
 
 
-def add_command_line_args(command_line_args, description='Generic command line arguments'):
+def get_argparser(command_line_args, argparser=None, description='Generic command line arguments'):
     """
-        :param command_line_args Should be an iterable item that contains a dictionary
+        Create a new argparser object with dynamically added command line args
+        :param command_line_args: Should be an iterable item that contains a dictionary
         filled with options for the argparse API
-        :param description Description of the argument parser
-
-        Raises Value Error if argument is not found
+        :param argparser: the argparse object to add arguments to. If not defined, a new argparse
+        instance will be created
+        :param description: description Description of the argument parser
+        :return:
     """
-    # Import argparse if needed. Otherwise, don't import
-    if argparse_module_name not in sys.modules:
-          import argparse
-    else:
-        argparse = sys.modules['argparse']
-
-    parser = argparse.ArgumentParser(description=description)
+    # Lazy load argument parser. Or otherwise, continue to add arguments
+    # onto existing parser
+    if not isinstance(argparser, argparse.ArgumentParser):
+        argparser = argparse.ArgumentParser(description=description)
 
     # Add all the necessary command_line arguments
     for i, argument in enumerate(command_line_args):
         arg_size = len(argument)
         # argument => (-shortcut, --command_name, kwargs)
         if arg_size == 3:
-            parser.add_argument(argument[0], argument[1], **argument[2])
+            argparser.add_argument(argument[0], argument[1], **argument[2])
         elif arg_size == 2:
-            parser.add_argument(argument[0], **argument[1])
+            argparser.add_argument(argument[0], **argument[1])
         else:
             raise ValueError("Invalid argument passed at index: ", i, ". Object: ", argument)
-    return parser
+    return argparser
 
 
 if __name__ == "__main__":
-    run_python_script("/home/jay/software/git_repositories/T-GCN/gcn.py", ['test', 'teemo'])
+    # run_python_script("/home/jay/software/git_repositories/T-GCN/gcn.py", ['test', 'teemo'])
 
-    argparse = add_command_line_args([
+    argparse = get_argparser([
         ['-lr', '--learning_rate', {
             'default': 0.001
         }]
