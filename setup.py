@@ -1,6 +1,8 @@
 """
     @Author Jay Lee
     Pysistant setup file.
+    @credit https://packaging.python.org/tutorials/packaging-projects/
+    for the packaging code used in setup.py
 """
 import setuptools
 
