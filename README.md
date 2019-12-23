@@ -18,8 +18,9 @@ The package structure is as follows. I will do my best to keep things up to date
             |───deeplearning
             |   __init__.py
             |
-            └───file
+            └───io
             │   │   __init__.py
+            │   │   file.py
             │   │   csv.py
             │
             └───logging
