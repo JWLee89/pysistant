@@ -51,6 +51,15 @@ def create_sh():
         TODO: Utility function for creating shell scripts on the fly.
         :return:
     """
+    pass
+
+
+def parse_arg_string():
+    """
+    TODO:
+    :return:
+    """
+    pass
 
 
 def get_argparser(command_line_args, argparser=None, description='Generic command line arguments'):
