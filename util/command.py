@@ -3,15 +3,38 @@
     This file will contain some utility functions for commands
     that will be useful for automating tasks via the command line.
 """
-import runpy
-import os
-import sys
 import argparse
+from pysistant.io.file import read
 from pathlib import Path
-from pysistant.util.validation import isiterable, ispython
+from pysistant.util.validation import *
+import subprocess
 
 
-def run_python_script(script_path, arguments, do_async=False):
+def shell(cmd):
+    """
+        Simple function for calling the shell
+        :param cmd:
+        :return:
+    """
+    subprocess.call(cmd, shell=True)
+
+
+def run_from_file(file_path):
+    """
+        Run Python script from a file. E.g. Let's say we have the following text
+            python test.py --num 1
+            python test.py --num 2
+            python test.py --num 3
+            python test.py --num 4
+            python test.py --num 5
+        :param file_path: The path of the file to read
+        :return:
+    """
+    for script_line in read(file_path):
+        shell(script_line)
+
+
+def run_python_script(script_path, arguments):
     """
         Run python script programmatically. Very useful for performing experiments
         by setting a variety of hyperparameters.
@@ -22,7 +45,6 @@ def run_python_script(script_path, arguments, do_async=False):
 
         :param script_path: The name of the script file that we want to run
         :param arguments: A list of arguments to be passed to the python script
-        :param do_async: Perform the execution of the script asynchronously.
         Useful if the script is not dependant upon the main program's outputs.
         :return:
     """
@@ -46,17 +68,10 @@ def run_python_script(script_path, arguments, do_async=False):
         raise TypeError("Arguments must either be a string or a iterable object of strings E.g. list or tuple")
 
 
-def create_sh():
-    """
-        TODO: Utility function for creating shell scripts on the fly.
-        :return:
-    """
-    pass
-
-
 def parse_arg_string():
     """
-    TODO:
+    Parse the string into an appropriate data structure for us to process
+    e.g. -a --argument default 10 help 'this is a sample argument'
     :return:
     """
     pass
@@ -77,22 +92,28 @@ def get_argparser(command_line_args, argparser=None, description='Generic comman
     if not isinstance(argparser, argparse.ArgumentParser):
         argparser = argparse.ArgumentParser(description=description)
 
-    # Add all the necessary command_line arguments
-    for i, argument in enumerate(command_line_args):
-        arg_size = len(argument)
-        # argument => (-shortcut, --command_name, kwargs)
-        if arg_size == 3:
-            argparser.add_argument(argument[0], argument[1], **argument[2])
-        elif arg_size == 2:
-            argparser.add_argument(argument[0], **argument[1])
-        else:
-            raise ValueError("Invalid argument passed at index: ", i, ". Object: ", argument)
+    if isinstance(command_line_args, str):
+        # TODO: Handle logic for processing string
+        pass
+    # Iterable object
+    elif issequence(command_line_args):
+        # Add all the necessary command_line arguments
+        for i, argument in enumerate(command_line_args):
+            arg_size = len(argument)
+            # argument => (-shortcut, --command_name, kwargs)
+            if arg_size == 3:
+                argparser.add_argument(argument[0], argument[1], **argument[2])
+            elif arg_size == 2:
+                argparser.add_argument(argument[0], **argument[1])
+            else:
+                raise ValueError("Invalid argument passed at index: ", i, ". Object: ", argument)
+    else:
+        raise ValueError("Input type: ", type(command_line_args), ". Please pass in a sequence or a string")
     return argparser
 
 
 if __name__ == "__main__":
-    # run_python_script("/home/jay/software/git_repositories/T-GCN/gcn.py", ['test', 'teemo'])
-
+    run_python_script("/home/jay/software/git_repositories/T-GCN/gcn.py", ['test', 'teemo'])
     argparse = get_argparser([
         ['-lr', '--learning_rate', {
             'default': 0.001

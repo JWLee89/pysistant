@@ -1,0 +1,5 @@
+python test.py --num 1
+python test.py --num 2
+python test.py --num 3
+python test.py --num 4
+python test.py --num 5
