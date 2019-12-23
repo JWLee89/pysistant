@@ -6,7 +6,8 @@ its various libraries and packages.
 
 ## Package Structure
 
-The package structure is as follows. I will do my best to keep things up to date on a weekly basis as I work on this side-project during my limited downtime.
+The package structure is as follows. 
+I will do my best to keep things up to date on a weekly basis as I work on this side-project during my limited downtime.
 
 ```
     pysistant
@@ -33,5 +34,6 @@ The package structure is as follows. I will do my best to keep things up to date
             │    
             └───util
                 │   __init__.py
-                │   data.py
+                │   command.py
+                |   validation.py
 ```
