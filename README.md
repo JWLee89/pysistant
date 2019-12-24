@@ -16,8 +16,12 @@ I will do my best to keep things up to date on a weekly basis as I work on this 
             |   setup.py
             │   __init__.py    
             │
+            |───concurrency
+            |   |   __init__.py
+            |   |   README.py
+            |   
             |───deeplearning
-            |   __init__.py
+            |   |   __init__.py
             |
             └───io
             │   │   __init__.py
@@ -35,5 +39,13 @@ I will do my best to keep things up to date on a weekly basis as I work on this 
             └───util
                 │   __init__.py
                 │   command.py
+                |   scripts_to_run.txt
                 |   validation.py
+                |   test.py
 ```
+
+## Contact 
+
+Please feel free to reach out to me to ask any questions or suggest possible ideas / request for features. 
+Although there is not a 100% guarantee that the idea / feature will be implemented, I will do my best to read through all
+the ideas and respond to emails.
