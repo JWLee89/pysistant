@@ -63,3 +63,25 @@ def srepr(target):
     if issequence(target):
         return '<' + ", ".join(srepr(x) for x in target) + '>'
     return repr(target)
+
+
+def are_instances_of(variables, *args):
+    """
+        A utility for checking multiple variables
+        :param variables:
+        :param args: The types that we want to check for. e.g.
+        are_instances_of([1, 2], float, int) => false
+        :return:
+    """
+    if isiterable(variables):
+        for item in variables:
+            if isinstance(item, args):
+                continue
+            else:
+                return False
+        return True
+    return False
+
+
+if __name__ == "__main__":
+    type_heck = are_instances_of([1, 2], int)

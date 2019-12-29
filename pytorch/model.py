@@ -5,6 +5,7 @@
 
 from pysistant.util import validation
 import torch.nn as nn
+import torch
 from abc import ABC, abstractmethod
 
 
@@ -12,16 +13,49 @@ class Model(ABC):
     """
         Abstract  Base Class for defining models
     """
-    def __init__(self, layers):
-        self.layers = layers
-        self.__init_layer()
 
-    def __init_layer(self):
+    def __init__(self, layers, learning_rate=0.001, optimizer=torch.optim.Adam):
+        self.layers = layers
+        self.__init_layers()
+        self.learning_rate = learning_rate
+        self.optimizer = optimizer
+        print("Model initialized")
+
+    def __init_layers(self):
+        """
+            Initialize the layers.
+            :return:
+        """
         if validation.isiterable(self.layers):
-            for layer in self.layers:
-                pass
+            size = len(self.layers)
+            # Must contain at least input and output layer
+            # for this to be a valid network
+            if size >= 1:
+                for i in range(size - 1):
+                    self.__init_layer(i,
+                                      self.layers[i], self.layers[i + 1])
+            else:
+                raise ValueError("Must contain at least one layer.")
         else:
             raise ValueError("layers must be an iterable object")
+
+    def __init_layer(self, index, input_size, output_size):
+        """
+            Logic for initializing a single layer
+            :param index: The current index in layers
+            :param input_size: The size of the input into this layer
+            :param output_size: The dimensions of the output for current layer
+            :return:
+        """
+        layer_sizes = [input_size, output_size]
+        if validation.are_instances_of(layer_sizes, int):
+            layer = Layer(input_size, output_size)
+        elif isinstance(input_size, Layer):
+            # Do nothing, since we already have a valid layer object
+            layer = input_size
+        else:
+            raise ValueError("Please specify either a Layer object or an integer")
+        self.layers[index] = layer
 
     def __repr__(self):
         """
@@ -30,7 +64,6 @@ class Model(ABC):
         """
         return "a custom model"
 
-    @abstractmethod
     def fit(self, X):
         """
             In order to fit a neural network, we need to provide
@@ -39,11 +72,7 @@ class Model(ABC):
             :param X: The input data
             :return:
         """
-        def do_fit():
-            """
-            Fit the model according
-            :return:
-            """
+        raise NotImplementedError
 
     def load(self, load_path):
         """
@@ -51,7 +80,7 @@ class Model(ABC):
             :param load_path: The path from where to load a model
             :return:
         """
-        pass
+        print("loading model")
 
     def save(self, save_path):
         """
@@ -62,12 +91,30 @@ class Model(ABC):
         pass
 
 
+class MLP(Model):
+    """
+        A simple implementation of the Multi-layer perceptron
+    """
+
+    def __init__(self, layers, learning_rate=0.001, optimizer=torch.optim.Adam):
+        super(MLP, self).__init__(layers, learning_rate, optimizer)
+
+    def fit(self, X):
+        print("test")
+
+    def __repr__(self):
+        result = "MLP: \n\n"
+        # for layer in self.layers:
+        #     result += layer
+        return result
+
 
 class Layer:
     """
         A layer of a neural network
     """
-    def __init__(self, input_size, output_size, layer_type=nn.Linear, activation=None):
+
+    def __init__(self, input_size, output_size, layer=nn.Linear, activation=None):
         """
             :param input_size: The input size of a neural network layer
             :param output_size: The output size of a neural network layer
@@ -76,7 +123,11 @@ class Layer:
         self.input_size = input_size
         self.output_size = output_size
         self.activation = activation
-        self.layer_type = layer_type
+        self.layer = layer(input_size, output_size)
+
+        # Initialize action e.g. nn.ReLU
+        if self.activation is not None:
+            self.activation = self.activation()
 
     def __repr__(self):
         """
@@ -84,9 +135,14 @@ class Layer:
             :return:
         """
         return f"Dim: ({self.input_size} X {self.output_size}). Activation: {self.activation}." \
-               f" Layer type: {self.layer_type}"
+               f" Layer type: {self.layer}"
+
+    def fit(self):
+        pass
 
 
 if __name__ == "__main__":
-    model = Model([Layer(128, 64, activation=nn.ReLU)])
+    # model = MLP([Layer(128, 64, activation=nn.ReLU)])
+    model = MLP([Layer(128, 64, activation=nn.ReLU)])
     print(model)
+    model.load("test")
