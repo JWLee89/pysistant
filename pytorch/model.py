@@ -64,12 +64,13 @@ class Model(ABC):
         """
         return "a custom model"
 
-    def fit(self, X):
+    def fit(self, X, epochs=500):
         """
             In order to fit a neural network, we need to provide
             input data. Y is not provided initially, but upon definition
             of the actual Model.
             :param X: The input data
+            :parm epochs: The number of epochs of training
             :return:
         """
         raise NotImplementedError
@@ -96,16 +97,17 @@ class MLP(Model):
         A simple implementation of the Multi-layer perceptron
     """
 
-    def __init__(self, layers, learning_rate=0.001, optimizer=torch.optim.Adam):
-        super(MLP, self).__init__(layers, learning_rate, optimizer)
+    def __init__(self, layers, **kwargs):
+        super(MLP, self).__init__(layers, **kwargs)
 
     def fit(self, X):
         print("test")
 
     def __repr__(self):
-        result = "MLP: \n\n"
-        # for layer in self.layers:
-        #     result += layer
+        result = f"MLP (lr: {self.learning_rate}, optimizer: {self.optimizer}): \n"
+        for layer in self.layers:
+            result += '\t'
+            result += repr(layer)
         return result
 
 
