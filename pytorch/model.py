@@ -6,10 +6,9 @@
 from pysistant.util import validation
 import torch.nn as nn
 import torch
-from abc import ABC, abstractmethod
 
 
-class Model(ABC):
+class Model:
     """
         Abstract  Base Class for defining models
     """
@@ -64,7 +63,7 @@ class Model(ABC):
         """
         return "a custom model"
 
-    def fit(self, X, epochs=500):
+    def fit(self, *inputs, epochs=500, learning_rate=0.001):
         """
             In order to fit a neural network, we need to provide
             input data. Y is not provided initially, but upon definition
@@ -100,7 +99,7 @@ class MLP(Model):
     def __init__(self, layers, **kwargs):
         super(MLP, self).__init__(layers, **kwargs)
 
-    def fit(self, X):
+    def fit(self, *args, **kwargs):
         print("test")
 
     def __repr__(self):
@@ -144,7 +143,6 @@ class Layer:
 
 
 if __name__ == "__main__":
-    # model = MLP([Layer(128, 64, activation=nn.ReLU)])
-    model = MLP([Layer(128, 64, activation=nn.ReLU)])
+    model = MLP([Layer(784, 64, activation=nn.ReLU)])
     print(model)
     model.load("test")
