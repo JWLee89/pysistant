@@ -32,11 +32,38 @@ def hasextension(path, extension):
 
 def ispython(script_path):
     """
-    Check to see if file is a python script file by extension
-    :param script_path:
-    :return:
+        Check to see if file is a python script file by extension
+        :param script_path:
+        :return:
     """
     return hasextension(script_path, ".py")
+
+
+def iscsv(file_path):
+    """
+        Check if file at given path is a csv file by extension
+        :param file_path: The path of the given file
+        :return: True if ends with .csv. Otherwise, return False
+    """
+    return hasextension(file_path, ".py")
+
+
+def istxt(file_path):
+    """
+        Check if file at given path is a .txt file by extension
+        :param file_path: The path of the given file
+        :return: True if ends with .txt. Otherwise, return False
+    """
+    return hasextension(file_path, ".txt")
+
+
+def ismarkdown(file_path):
+    """
+        Check if file at given path is a .md file by extension
+        :param file_path: The path of the given file
+        :return: True if ends with .md. Otherwise, return False
+    """
+    return hasextension(file_path, ".md")
 
 
 def issequence(target):
