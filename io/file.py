@@ -4,7 +4,7 @@
     and also reducing duplicate code when working with files.
 """
 import os
-
+import mmap
 
 def read(file_name, write_row=None):
     """
@@ -42,6 +42,22 @@ def write(file_path, data, write_row=None):
                 do_write = write_row
             for row in data:
                 do_write(row)
+
+
+def get_lines(file_path):
+    """
+        return an integer representing the number of lines
+        in the given file
+        :param file_path: Path to the given file
+        :return: The number of lines in a file
+    """
+    with open(file_path, 'r+') as file:
+        line_count = 0
+        buffer = mmap.mmap(file.fileno(), 0)
+        readline = buffer.readline
+        while readline():
+            line_count += 1
+        return line_count
 
 
 def combine_files(file_name, import_file_names):
