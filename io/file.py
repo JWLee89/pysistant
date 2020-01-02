@@ -6,6 +6,7 @@
 import os
 import mmap
 
+
 def read(file_name, write_row=None):
     """
         Simple function for reading a CSV and and adding to a list
