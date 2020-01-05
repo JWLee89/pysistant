@@ -120,4 +120,4 @@ if __name__ == "__main__":
         }]
     ])
     args = vars(argparse.parse_args())
-    print(args)
+    shell("tmux new-session")
