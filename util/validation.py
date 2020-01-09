@@ -110,5 +110,21 @@ def are_instances_of(variables, *args):
     return False
 
 
+def beginswith(beginning_text, text):
+    """
+        Check to see if given body of words begins with
+        :param beginning_text:
+        :param text:
+        :return:
+    """
+    beginning_text_len = len(beginning_text)
+    return text[:beginning_text_len] == beginning_text
+
+
 if __name__ == "__main__":
     type_heck = are_instances_of([1, 2], int)
+    test = beginswith("teemo is", "teemo is an annoying champion to play against")
+    print(test)
+    # case-sensitive
+    test = beginswith("teemo iS", "teemo is an annoying champion to play against")
+    print(test)
